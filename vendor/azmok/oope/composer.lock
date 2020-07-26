@@ -1,0 +1,39 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "93f9744e366d6298b386a430820fb01f",
+    "packages": [
+        {
+            "name": "azmok/autil",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "C:/Users/Azuma/github/azmok/autil",
+                "reference": "8174bcf8910d1022cd48f7785cd475fbc7aa1737"
+            },
+            "require": {
+                "azmok/oope": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/core.php",
+                    "src/html.php",
+                    "src/file.php",
+                    "src/classHelper.php"
+                ]
+            }
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
