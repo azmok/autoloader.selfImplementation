@@ -71,7 +71,7 @@ class Autoloader{
       if( empty($pkgDir) ){
          global $vendorDir;
          
-         
+         _( $vendorDir );
          $this->packageDir = dirname( $vendorDir );
       } else {
          $this->packageDir = $pkgDir;
@@ -85,10 +85,10 @@ class Autoloader{
    }
    
    private function getComposersJson(){
-      
+      inject( "getComposersJson()", "h1" );
       $pkgPath =  $this->packageDir ."/composer.json";
       $this->json = \JSON::parseFromFile($pkgPath);
-      
+      _( $this->json );
       
       return $this;
    }
@@ -112,12 +112,12 @@ class Autoloader{
       //       }
       //    }
       // }
-      
+      inject( "getAutoloadType()" , "h3");
       $json = $this->json;
       
       foreach($json as $prop => $val){
          if( $prop === "autoload"){
-            
+            _(3);
             $json2 = $json->{$prop};
             $this->autoload = $json->{$prop};
             
@@ -127,12 +127,12 @@ class Autoloader{
          }
       }
       
-      
+      _( $this->type );
       return $this;
    }
    
    private function getDependancies(){
-      
+      inject( "==== getDependancies() ====>", "h3" );
       $json = $this->json;
       $pkgs = $json->require;
       
@@ -140,8 +140,8 @@ class Autoloader{
          foreach($pkgs as $pkgName => $version){
            
             $path_pkg = self::$VENDOR_DIR ."/". $pkgName;
-            
-            
+            _( "<b>package path</b>" );
+            _( $path_pkg );
             
             if( in_array($pkgName, self::$dependancyNames) ){
                continue;
@@ -155,14 +155,14 @@ class Autoloader{
       }
       
       
-      
-      
+      _( self::$dependancyNames );
+      inject("<====  getDependancies() ====//", "h3");
       
       return $this;
    }
    
    private function loadingFunctions(){
-      
+      inject("loadingFunctions", "h3");
       
 
       $obj = $this->json;
@@ -170,12 +170,12 @@ class Autoloader{
       $paths = $obj->autoload->files;
       $path_pkg = self::$VENDOR_DIR  ."/". $packageName;
       
-      
+      _( $packageName, $files, $path );
          
       foreach( $paths as $path ){
          $filePath = "{$path_pkg}/{$path}";
          
-         
+         _( '$filePath', $filePath );
          
          require_once($filePath);
       }
@@ -184,10 +184,10 @@ class Autoloader{
    private function loadingClasses_PSR0(){}
    
    private function loadingClasses_PSR4(){
-      
+      inject("loadingClasses_PSR4", "h2");
       spl_autoload_register(function($name){
       
-         
+         _( $name );
          
          //### (1)stlip package name
          $fileName = substr(
@@ -195,12 +195,12 @@ class Autoloader{
             strpos($name, '\\') + 1,
             mb_strlen($name)
          );
-         
+         _( "after::substr()::{$fileName}" );
          
 
          //### (2)change b-slash to f-slash
          $fileName2 = preg_replace('~\\\~', '/', $fileName);
-         
+         _( "after::preg_replace():: {$fileName2}" );
 
          
          $obj = $this->json;
@@ -214,18 +214,18 @@ class Autoloader{
          $path_classes = "{$path}/${fileName2}.php";
          $path_traits = "{$path}/{$fileName2}.php";
          $path_interfaces = "{$path}/{$fileName2}.php";
-         
+         _( $path_classes );
          
          ##3. requiring Class
          if( \is_readable( $path_classes ) ){
             require $path_classes;
-            
+            _( "reqired!, {$path_classes}" );
          }
       });
    }
    
    private function register(){
-      // 
+      // inject("register", "h2");
       $type = $this->type;
       
       switch( $type ){
