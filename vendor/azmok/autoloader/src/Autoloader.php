@@ -41,7 +41,7 @@ use function Autil\_, Autil\inject;
    Autoloader
 -----------*
  + __construct
- - getComposersJson
+ - getComposerJsonObject
  - getAutoloadType
  - getDependancies
  - register
@@ -78,13 +78,13 @@ class Autoloader{
       }
       
       $this
-         ->getComposersJson()
+         ->getComposerJsonObject()
          ->getAutoloadType()
          ->getDependancies()
          ->register();
    }
    
-   private function getComposersJson(){
+   private function getComposerJsonObject(){
       
       $pkgPath =  $this->packageDir ."/composer.json";
       $this->json = \JSON::parseFromFile($pkgPath);
