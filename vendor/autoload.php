@@ -11,7 +11,6 @@ $projectDir = dirname( __DIR__ );
 
 // initalize settings
 Autoloader::$VENDOR_DIR = __DIR__;
-Autoloader::$PROJECT_DIR = $projectDir;
 
 
 // instanciate Autoloader

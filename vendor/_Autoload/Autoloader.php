@@ -13,55 +13,48 @@ use function Autil\_, Autil\inject;
 
 
 
+
 /*--------
-
+   Autoloader
 -----------
- - resolveDependancies()
- - checkAutoloadTypes()
- - loadingFunctions()
- - loadingClassesPSR0()
- - loadingClassesPSR4()
+ + __construct
+ - getComposersJson
+ - getAutoloadType
+ - getDependancies
+ - register
+ - loadingFunctions
+ - loadingClasses_PSR0
+ - loadingClasses_PSR4
 ---------*/
-
-// relativePath: vendor/azmok/AutoLoader/src/AutoLoader.php
-
-
-
-
-
-
-
-
 
 class Autoloader{
 
    static $VENDOR_DIR;
-   static $PROJECT_DIR;
    static $dependancyNames = [];
    
-   private $pending = [];
    private $json = null;
    private $type = "";
    private $autoload = null;
-   private $filePaths = [];
+   
    
    
    function __construct($dir){
       $this
-         ->getComposerJson( $dir )
+         ->getComposersJson( $dir )
          ->getAutoloadType()
          ->getDependancies()
-         
-         ->register(); /**/
+         ->register();
    }
-   private function getComposerJson($pkgDir){
-      // inject( "getComposerJson()", "h1" );
+   
+   private function getComposersJson($pkgDir){
+      // inject( "getComposersJson()", "h1" );
       $path = "{$pkgDir}/composer.json";
       $this->json = \JSON::parseFromFile($path);
       // _( $this->json );
       
       return $this;
    }
+   
    private function getAutoloadType(){
       // inject( "getAutoloadType()" , "h3");
       $obj = $this->json;
@@ -77,24 +70,25 @@ class Autoloader{
       //_ ( $this->type );
       return $this;
    }
+   
    private function getDependancies(){
       
       $obj = $this->json;
       $pkgs = $obj->require;
       
       if( $pkgs ) {
-         foreach($pkgs as $FQpkgName => $version){
-            //$arr = explode("/", $FQpkgName);
+         foreach($pkgs as $pkgName => $version){
+            //$arr = explode("/", $pkgName);
             //$vendorName = $arr[0];
             //$pkgName = $arr[1];
-            $path_pkg = self::$VENDOR_DIR ."/". $FQpkgName;
+            $path_pkg = self::$VENDOR_DIR ."/". $pkgName;
             // echo($path_pkg);
             
-            if( in_array($FQpkgName, self::$dependancyNames) ){
+            if( in_array($pkgName, self::$dependancyNames) ){
                continue;
                
             } else {
-               self::$dependancyNames[] = $FQpkgName;
+               self::$dependancyNames[] = $pkgName;
                
                new Autoloader( $path_pkg );
             }
@@ -105,31 +99,6 @@ class Autoloader{
       // inject("-----", "h2");
       
       return $this;
-   }
-   
-   function register(){
-      // inject("register", "h2");
-      $type = $this->type;
-      
-      switch( $type ){
-         case "psr-0":
-            
-            $this->loadingClassesPSR0();
-            break;
-            
-         case "psr-4":
-            //_ ( "psr-4" );
-            $this->loadingClassesPSR4();
-            //   or 
-            // spl_autoload_register(function(){
-            //   $this->loadingClassesPSR4();
-            // });
-            break;
-            
-         case "files":
-            $this->loadingFunctions();
-            break;
-      }
    }
    
    private function loadingFunctions(){
@@ -150,35 +119,37 @@ class Autoloader{
       }
    }
    
-   private function loadingClassesPSR0(){}
+   private function loadingClasses_PSR0(){}
    
-   private function loadingClassesPSR4(){
-      // inject("loadingClassesPSR4", "h2");
+   private function loadingClasses_PSR4(){
+      // inject("loadingClasses_PSR4", "h2");
       spl_autoload_register(function($name){
          //_ ( $name );
-         //# (1)stlip package name
-         $renamed = substr(
+         
+         //### (1)stlip package name
+         $fileName = substr(
             $name, 
             strpos($name, '\\')+1,
             mb_strlen($name)
          );
-         //_ ( "after::substr()::{$renamed}" );
-         //#(2) change b-slash to f-slash
-         $renamed  = preg_replace('~\\\~', '/', $renamed);
-         //_ ( "after::preg_replace():: {$renamed}" );
+         //_ ( "after::substr()::{$fileName}" );
+         
+         //### (2)change b-slash to f-slash
+         $fileName2  = preg_replace('~\\\~', '/', $fileName2);
+         //_ ( "after::preg_replace():: {$fileName2}" );
 
          
          $obj = $this->json;
-         $FQpkgName = $obj->name;
+         $pkgName = $obj->name;
          $psr4 = $obj->autoload->{'psr-4'};
          $assoc = get_object_vars( $psr4 );
          
          foreach( $assoc as $namespace => $dirName){
-            $path = self::$VENDOR_DIR ."/{$FQpkgName}/{$dirName}";
+            $path = self::$VENDOR_DIR ."/{$pkgName}/{$dirName}";
          }
-         $path_classes = "{$path}/${renamed}.php";
-         $path_traits = "{$path}/{$renamed}.php";
-         $path_interfaces = "{$path}/{$renamed}.php";
+         $path_classes = "{$path}/${fileName2}.php";
+         $path_traits = "{$path}/{$fileName2}.php";
+         $path_interfaces = "{$path}/{$fileName2}.php";
          //_ ( $path_classes );
          ##3. requiring Class
          if( \is_readable( $path_classes ) ){
@@ -187,4 +158,30 @@ class Autoloader{
          }
       });
    }
+   
+   private function register(){
+      // inject("register", "h2");
+      $type = $this->type;
+      
+      switch( $type ){
+         case "psr-0":
+            
+            $this->loadingClasses_PSR0();
+            break;
+            
+         case "psr-4":
+            //_ ( "psr-4" );
+            $this->loadingClasses_PSR4();
+            //   or 
+            // spl_autoload_register(function(){
+            //   $this->loadingClasses_PSR4();
+            // });
+            break;
+            
+         case "files":
+            $this->loadingFunctions();
+            break;
+      }
+   }
+   
 }
