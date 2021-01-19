@@ -1,8 +1,8 @@
 <?php
 
-require_once "azmok/Autoload/src/Autoloader.php";
+require_once "azmok/autoloader/src/Autoloader.php";
 
-use \Autoloader;
+use Autoloader\Autoloader;
 
 
 
