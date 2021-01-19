@@ -1,17 +1,16 @@
 <?php
 
-require_once "_Autoload/Autoloader.php";
+require_once "azmok/Autoload/src/Autoloader.php";
 
-use _Autoload\Autoloader;
+use \Autoloader;
 
 
 
-$projectDir = dirname( __DIR__ );
 
 
 // initalize settings
 Autoloader::$VENDOR_DIR = __DIR__;
-
+Autoloader::$PROJECT_DIR = dirname( __DIR__ );
 
 // instanciate Autoloader
-new Autoloader( $projectDir );
+new Autoloader();

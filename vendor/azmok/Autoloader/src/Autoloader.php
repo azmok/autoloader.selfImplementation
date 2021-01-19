@@ -1,7 +1,7 @@
 <?php
 
 
-namespace _Autoload;
+namespace Autoloader;
 
 
 require_once dirname(__DIR__) . "/azmok/autil/src/core.php";
@@ -29,7 +29,8 @@ use function Autil\_, Autil\inject;
 
 class Autoloader{
 
-   static $VENDOR_DIR;
+   static $VENDOR_DIR = "";
+   static $PROJECT_DIR = "";
    static $dependancyNames = [];
    
    private $json = null;
@@ -38,17 +39,17 @@ class Autoloader{
    
    
    
-   function __construct($dir){
+   function __construct(){
       $this
-         ->getComposersJson( $dir )
+         ->getComposersJson()
          ->getAutoloadType()
          ->getDependancies()
          ->register();
    }
    
-   private function getComposersJson($pkgDir){
+   private function getComposersJson(){
       // inject( "getComposersJson()", "h1" );
-      $path = "{$pkgDir}/composer.json";
+      $path = "{$PROJECT_DIR}/composer.json";
       $this->json = \JSON::parseFromFile($path);
       // _( $this->json );
       
